@@ -1,14 +1,18 @@
+%define		_suffix	jo
+%define		_shortver	%(echo %{version} | tr -d .)
 Summary:	WineTools is a menu driven installer for installing Windows programs under Linux.
 Name:		winetools
 Version:	2.1.2
-Release:	0.jo.4
+Release:	0.%{_suffix}.6
 License:	GPL
 Group:		Applications/Emulators
-Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%(echo %{version} | tr -d .)jo.tar.gz
+Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{_shortver}%{_suffix}.tar.gz
 # Source0-md5:	3ce523e4c52c0b9e31fc961b1be93c06
 Patch0:		%{name}-paths.patch
 Patch1:		%{name}-mktemp.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
+BuildRequires:	sed >= 4.0
+BuildRequires:	findutils
 Requires:	gettext
 Requires:	wget
 Requires:	wine
@@ -41,9 +45,13 @@ WineTools was initially written by Frank Hendriksen and was extended
 by me (Joachim von Thadden). It is licensed under the GPL.
 
 %prep
-%setup -q -n %{name}-%(echo %{version} | tr -d .)jo
-mv wt%(echo %{version} | tr -d .)jo wt2
+%setup -q -n %{name}-%{_shortver}%{_suffix}
+mv wt%{_shortver}%{_suffix} wt2
 %patch0 -p1
+
+sed -i -e '
+	s,\. findwine,. /usr/share/winetools/findwine,
+' $(find scripts -type f)
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -73,4 +81,18 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc INSTALL.txt LICENSE.txt doc/*
 %attr(755,root,root) %{_bindir}/*
-%{_datadir}/winetools
+
+%dir %{_datadir}/winetools
+%{_datadir}/winetools/doc
+%{_datadir}/winetools/icon
+
+%{_datadir}/winetools/PowBallDX.cfg
+%{_datadir}/winetools/config.212
+%{_datadir}/winetools/config.empty
+%{_datadir}/winetools/gettext.sh
+%{_datadir}/winetools/findwine
+%{_datadir}/winetools/lauge-prefs.ini
+%attr(755,root,root) %{_datadir}/winetools/chopctrl.pl
+
+%dir %{_datadir}/winetools/scripts
+%attr(755,root,root) %{_datadir}/winetools/scripts/*
