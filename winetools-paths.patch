@@ -1,0 +1,45 @@
+--- ./wt212jo	2005-05-21 15:30:39.000000000 +0300
++++ ./wt2	2005-05-29 21:43:46.000000000 +0300
+@@ -8,9 +8,9 @@
+ # Send comments, bugreports, etc. to thadden@web.de"
+ 
+ # base definitions
+-BASEDIR="/usr/local/winetools"
++BASEDIR="/usr/share/winetools"
+ BINDIR="$HOME/bin"
+-DIALOG="$BASEDIR/Xdialog"
++DIALOG="/usr/bin/Xdialog"
+ WINEDIR="`echo ~/.wine`"
+ CONFIG="$WINEDIR/winetools.log"
+ SYSDIR="$HOME/winetools"
+--- ./findwine~	2005-05-13 23:42:35.000000000 +0300
++++ ./findwine	2005-05-29 21:43:46.000000000 +0300
+@@ -2,8 +2,8 @@
+ SETARCH=""
+ WINE=""
+ WINEDIR="`echo ~/.wine`"
+-DIALOG="/usr/local/winetools/Xdialog"
+-BASEDIR="/usr/local/winetools"
++DIALOG="/usr/bin/Xdialog"
++BASEDIR="/usr/share/winetools"
+ BINDIR="$HOME/bin"
+ CDROM="`ls -l $HOME/.wine/dosdevices/ 2>/dev/null | grep \" d: -> \"| sed -e \"s/^.* d: -> \(.*\)$/\1/\"`"
+ START="T"
+@@ -15,7 +15,7 @@
+                 --msgbox "You have no gettext.sh installed so you will not\nget any internationalized messages from WineTools." 7 60
+   . $BASEDIR/gettext.sh.dummy
+ fi
+-export TEXTDOMAINDIR=/usr/local/share/locale
++export TEXTDOMAINDIR=/usr/share/locale
+ export TEXTDOMAIN=wt2
+ 
+ #for Debian:
+@@ -82,7 +82,7 @@
+   . gettext.sh
+   echo "found gettext in path"
+ else
+-  for n in "/usr" "/bin" "/usr/bin" "/usr/local/winetools"; do
++  for n in "/usr" "/bin" "/usr/bin" "/usr/share/winetools"; do
+     if [ -e "${n}/gettext.sh" ]; then
+       . ${n}/gettext.sh
+       echo "found gettext in $n"

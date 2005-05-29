@@ -1,0 +1,426 @@
+--- wt2	2005-05-29 21:47:44.000000000 +0300
++++ /tmp/wt2	2005-05-29 22:05:38.000000000 +0300
+@@ -126,39 +126,42 @@
+ 
+   cdrommount="`grep -e "cdrom" -e "dvd" -e "supermount" /etc/fstab`"	#|cut -d\  -f 1|paste -s|sed -e "s/	/,/"`"
+   [ "$cdrommount" = "" ] && cdrommount="/mnt/cdrom"
++  TMP=`mktemp ${TMPDIR:-/tmp}/cdrom.XXXXXX` || exit $?
+   $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+   	--inputbox "`eval_gettext "What's the mount point of the cdrom/dvd drive?\n\nYour /etc/fstab says:\n$cdrommount"`" \
+-	600x300 "`echo "$cdrommount"|sed -e "s/\ \+/ /g"|tr '\t' ' '|cut -d\  -f 2|head -1`" 2> /tmp/cdrom.tmp.$$	#'
++	600x300 "`echo "$cdrommount"|sed -e "s/\ \+/ /g"|tr '\t' ' '|cut -d\  -f 2|head -1`" 2> $TMP #'
+   retval=$?
+   if [ "$retval" = "0" ]; then
+-    cdrommount=`cat /tmp/cdrom.tmp.$$`
+-    rm -f /tmp/cdrom.tmp.$$
++    cdrommount=`cat $TMP`
++    rm -f $TMP
+   else
+     cdrommount=""
+     return
+   fi
+ 
+   [ "$username" = "" ] && username="`grep \"^${LOGNAME}:\" /etc/passwd|cut -d: -f 5`"
++  TMP=`mktemp ${TMPDIR:-/tmp}/username.XXXXXX` || exit $?
+   $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+   	--inputbox "`eval_gettext "What's your username?"`" \
+-	600x300 "$username" 2> /tmp/username.tmp.$$	#'
++	600x300 "$username" 2> $TMP	#'
+   retval=$?
+   if [ "$retval" = "0" ]; then
+-    username=`cat /tmp/username.tmp.$$`
+-    rm -f /tmp/username.tmp.$$
++    username=`cat $TMP`
++    rm -f $TMP
+   else
+     username="Change preferred owner in ~/.wine/system.reg"
+     return
+   fi
+ 
+   [ "$organization" = "" ] && organization="`cat /etc/sysconfig/organization 2>/dev/null`"
++  TMP=`mktemp ${TMPDIR:-/tmp}/organization.XXXXXX` || exit $?
+   $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+   	--inputbox "`eval_gettext "What's your organization?"`" \
+-	600x300 "$organization" 2> /tmp/organization.tmp.$$	#'
++	600x300 "$organization" 2> $TMP	#'
+   retval=$?
+   if [ "$retval" = "0" ]; then
+-    organization=`cat /tmp/organization.tmp.$$`
+-    rm -f /tmp/organization.tmp.$$
++    organization=`cat $TMP`
++    rm -f $TMP
+   else
+     organization="Change preferred organization in ~/.wine/system.reg"
+     return
+@@ -172,10 +175,10 @@
+   waitforwineexit
+   # now we have to check whether we have a suitable configuration now
+   if [ ! -e "$WINEDIR/drive_c/windows/regedit.exe" ] && [ ! -e "$WINEDIR/c/windows/regedit.exe" ] && [ ! -e "$WINEDIR/fake_windows/windows/regedit.exe" ]; then
+-    rm -f /tmp/links.tmp.$$
++    TMP=`mktemp ${TMPDIR:-/tmp}/links.XXXXXX` || exit $?
+     $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+           --inputbox "`eval_gettext "Since your Wine installation did not create a suitable\n.wine directory on it's own, WineTools will do it for you.\nWhat's the base directory of your wine installation?\ne.g. /usr/lib/wine:"`" \
+-  	  400x300 "/usr/lib/wine" 2> /tmp/links.tmp.$$
++  	  400x300 "/usr/lib/wine" 2> $TMP
+     if [ "$?" = "0" ]; then
+       # we have no configuration yet, so we copy one
+       rm -Rf .wine
+@@ -184,8 +187,8 @@
+       cd ~
+       wine rundll32.exe setupapi.dll,InstallHinfSection DefaultInstall 128 wine.inf
+       # change filesystem links
+-      winelinks=`cat /tmp/links.tmp.$$`
+-      rm -f /tmp/links.tmp.$$
++      winelinks=`cat $TMP`
++      rm -f $TMP
+       [ "$winelinks" = "" ] && winelinks="/usr/lib/wine"
+       for n in `find $WINEDIR/drive_c/windows -lname '/usr/lib/wine/*'`; do
+ #       linkdestold="`stat -c %N $n |cut -d» -f3|cut -d« -f1`"	# german
+@@ -282,14 +285,15 @@
+ 	--no-cancel \
+ 	--msgbox "`eval_gettext "You already have printers defined in your config. Please edit this manually."`" 7 80
+   else
++    TMP=`mktemp ${TMPDIR:-/tmp}/ppd.XXXXXX` || exit $?
+     $DIALOG --title "`eval_gettext "Add printcap printers"`" \
+ 	--inputbox "`eval_gettext "What's the path to your ppd-file?\n
+-e.g. /usr/share/wine/generic.ppd"`" 300x200 "/usr/share/wine/generic.ppd" 2> /tmp/ppd.tmp.$$	#'
++e.g. /usr/share/wine/generic.ppd"`" 300x200 "/usr/share/wine/generic.ppd" 2> $TMP #'
+ 
+     retval=$?
+ 
+-    ppdpath=`cat /tmp/ppd.tmp.$$`
+-    rm -f /tmp/ppd.tmp.$$
++    ppdpath=`cat $TMP`
++    rm -f $TMP
+     [ "$ppdpath" = "" ] && ppdpath="/usr/share/wine/generic.ppd"
+ 
+     case $retval in
+@@ -322,6 +326,7 @@
+ needsw "dcom98.exe" "--no-cancel"
+ needsw "Microsoft Internet Explorer.*" "--no-cancel"
+ 
++TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
+ $DIALOG --title "`eval_gettext "TrueType Fonts"`" \
+ 	--cancel-label "`eval_gettext "Main menu"`" \
+ 	--check "`eval_gettext "Show Info"`" \
+@@ -342,15 +347,15 @@
+ 	"Times New Roman"  "" \
+ 	"Trebuchet"  "" \
+ 	"Verdana"  "" \
+-	"Webdings"  "" 2> /tmp/menu.tmp.$$ #'
++	"Webdings"  "" 2> $TMP #'
+ 	
+ retval=$?
+ 
+-choice=`cat /tmp/menu.tmp.$$|grep -v "checked"`
++choice=`cat $TMP|grep -v "checked"`
+ checked="F"
+-[ "`cat /tmp/menu.tmp.$$|grep \"checked\"`" = "checked" ] && checked="T"
++[ "`cat $TMP|grep \"checked\"`" = "checked" ] && checked="T"
+ 
+-rm -f /tmp/menu.tmp.$$
++rm -f $TMP
+ 
+ case $retval in
+ 0)
+@@ -564,9 +569,10 @@
+     realinstall "$1" "$2"
+     failed="$?"
+   else
+-    $DIALOG  --title "`eval_gettext "Select File"`" --fselect "~/.wine/c/" 50 70 2>/tmp/file.tmp.$$
++    TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
++    $DIALOG  --title "`eval_gettext "Select File"`" --fselect "~/.wine/c/" 50 70 2>$TMP
+     if [ "$?" = "0" ]; then
+-      sysname="`cat /tmp/file.tmp.$$`"
++      sysname="`cat $TMP`"
+       dirname=`dirname "$sysname"`
+       filename=`basename "$sysname"`
+       rm "$WINEDIR/dosdevices/y:"
+@@ -580,7 +586,7 @@
+     else
+       failed="99"
+     fi
+-    rm /tmp/file.tmp.$$
++    rm $TMP
+   fi
+   echo "`eval_gettext "Failed: $failed"`"
+   return "$failed"
+@@ -664,12 +670,13 @@
+ #[ "$installer" = "" ] && installer="$WINE ./$sysname"
+ #echo "WINEDLLOVERRIDES=\"$WINEDLLOVERRIDES\" $installer"
+ #$installer
++      TMP=`mktemp ${TMPDIR:-/tmp}/wineinstall.XXXXXX` || exit $?
+       [ -e "$HOME/.wine/dosdevices/z:" ] && mv "$HOME/.wine/dosdevices/z:" "$HOME/.wine/dosdevices/.z:"
+       if [ "$installer" = "" ]; then
+         {
+ 	  echo "WINEDEBUG=\"$WINEDEBUG\" WINEDLLOVERRIDES=\"$WINEDLLOVERRIDES\" $WINE ./$sysname"
+ 	  WINEDEBUG="$WINEDEBUG" WINEDLLOVERRIDES="$WINEDLLOVERRIDES" $WINE ./$sysname
+-	  echo "$?" >/tmp/wineinstall.$$.tmp
++	  echo "$?" >$TMP
+         } &
+       elif [ "$installer" = "***SEARCH***" ]; then
+ 	# check for autorun first
+@@ -697,19 +704,19 @@
+ 	    echo "installer found as \"$installer\""
+ 	    echo "WINEDEBUG=\"$WINEDEBUG\" WINEDLLOVERRIDES=\"$WINEDLLOVERRIDES\" $installer"
+ 	    WINEDEBUG="$WINEDEBUG" WINEDLLOVERRIDES="$WINEDLLOVERRIDES" $installer
+-	    echo "$?" >/tmp/wineinstall.$$.tmp
++	    echo "$?" >$TMP
+ 	  } &
+ 	fi
+       else
+         {
+ 	  echo "WINEDEBUG=\"$WINEDEBUG\" WINEDLLOVERRIDES=\"$WINEDLLOVERRIDES\" $installer"
+ 	  WINEDEBUG="$WINEDEBUG" WINEDLLOVERRIDES="$WINEDLLOVERRIDES" $installer
+-	  echo "$?" >/tmp/wineinstall.$$.tmp
++	  echo "$?" >$TMP
+ 	} &
+       fi
+       sleep 3s
+       waitforwineexit
+-      failed="`cat /tmp/wineinstall.$$.tmp`"
++      failed="`cat $TMP`"
+       echo "`eval_gettext "Failed: $failed"`"
+       [ "$2" = "--nofail" ] && failed="0"
+       [ -e "$HOME/.wine/dosdevices/.z:" ] && mv "$HOME/.wine/dosdevices/.z:" "$HOME/.wine/dosdevices/z:"
+@@ -773,6 +780,7 @@
+ needsw "dcom98.exe" "--no-cancel"
+ needsw "Microsoft Internet Explorer.*" "--no-cancel"
+ 
++TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
+ $DIALOG --title "`eval_gettext "System Software"`" \
+ 	--cancel-label "`eval_gettext "Main menu"`" \
+ 	--icon $BASEDIR/icon/computer.xpm \
+@@ -796,14 +804,14 @@
+ 	"MSXML 4.0 Service Pack 2 German" "" \
+         "Windows Script 5.6 English"  "" \
+         "Windows Script 5.6 German"  "" \
+-	"Common Controls 5.0" "" 2> /tmp/menu.tmp.$$
++	"Common Controls 5.0" "" 2> $TMP
+ 
+ retval=$?
+ 
+-choice=`cat /tmp/menu.tmp.$$|grep -v "checked"`
++choice=`cat $TMP|grep -v "checked"`
+ checked="F"
+-[ "`cat /tmp/menu.tmp.$$|grep \"checked\"`" = "checked" ] && checked="T"
+-rm -f /tmp/menu.tmp.$$
++[ "`cat $TMP|grep \"checked\"`" = "checked" ] && checked="T"
++rm -f $TMP
+ 
+ case $retval in
+ 0)
+@@ -1058,6 +1066,7 @@
+ {
+ init
+ 
++TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
+ $DIALOG --title "`eval_gettext "Base Setup"`" \
+ 	--cancel-label "`eval_gettext "Main menu"`" \
+ 	--icon $BASEDIR/icon/computer.xpm \
+@@ -1079,14 +1088,14 @@
+ 	"Internet Explorer 6.0 SP1 French" "" \
+ 	"Internet Explorer 6.0 SP1 Norwegian" "" \
+ 	" " "" \
+-	"`eval_gettext "Add printcap (non CUPS) printers"`" "" 2> /tmp/menu.tmp.$$
++	"`eval_gettext "Add printcap (non CUPS) printers"`" "" 2> $TMP
+ 	
+ retval=$?
+ 
+-choice=`cat /tmp/menu.tmp.$$|grep -v "checked"`
++choice=`cat $TMP|grep -v "checked"`
+ checked="F"
+-[ "`cat /tmp/menu.tmp.$$|grep \"checked\"`" = "checked" ] && checked="T"
+-rm -f /tmp/menu.tmp.$$
++[ "`cat $TMP|grep \"checked\"`" = "checked" ] && checked="T"
++rm -f $TMP
+ 
+ case $retval in
+ 0)
+@@ -1259,6 +1268,7 @@
+ needsw "dcom98.exe" "--no-cancel"
+ needsw "Microsoft Internet Explorer.*" "--no-cancel"
+ 
++TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
+ $DIALOG --title "`eval_gettext "Additional Software"`" \
+ 	--cancel-label "`eval_gettext "Main menu"`" \
+ 	--check "`eval_gettext "Show Info"`" \
+@@ -1367,14 +1377,14 @@
+ 	  "Xpdf 3.00" "Xpdf 3.00" "" "2" "`eval_gettext "some pdf conversion tools | License: open source software"`" \
+ 	"13" "Misc" "" "1" "`eval_gettext "."`" \
+ 	  "TVgenial" "TVgenial" "" "2" "`eval_gettext "german TV program guide | License: freeware | Alternative: www.tvtv.de"`" \
+-	2> /tmp/menu.tmp.$$
++	2> $TMP
+ 
+ retval=$?
+ 
+-choice=`cat /tmp/menu.tmp.$$|grep -v "checked"`
++choice=`cat $TMP|grep -v "checked"`
+ checked="F"
+-[ "`cat /tmp/menu.tmp.$$|grep \"checked\"`" = "checked" ] && checked="T"
+-rm -f /tmp/menu.tmp.$$
++[ "`cat $TMP|grep \"checked\"`" = "checked" ] && checked="T"
++rm -f $TMP
+ 
+ case $retval in
+ 0)
+@@ -2631,6 +2641,7 @@
+ function mainmenu()
+ {
+ init
++TMP=`mktemp ${TMPDIR:-/tmp}/menu.XXXXXX` || exit $?
+ $DIALOG --title "WineTools 2.1.2" \
+ 	--cancel-label "`eval_gettext "exit"`" \
+ 	--item-help \
+@@ -2654,14 +2665,14 @@
+ 	"`eval_gettext "Edit the Wine configuration file"`" "" "`eval_gettext "Manually edit the config. Be careful! This can break your setup."`" \
+ 	" " "" "" \
+ 	"`eval_gettext "Read Intro again"`" "" "" \
+-	"`eval_gettext "About"`" "" "" 2> /tmp/menu.tmp.$$
++	"`eval_gettext "About"`" "" "" 2> $TMP
+ 
+ retval=$?
+ 
+-choice=`cat /tmp/menu.tmp.$$|grep -v "checked"`
++choice=`cat $TMP|grep -v "checked"`
+ checked="F"
+-[ "`cat /tmp/menu.tmp.$$|grep \"checked\"`" = "checked" ] && checked="T"
+-rm -f /tmp/menu.tmp.$$
++[ "`cat $TMP|grep \"checked\"`" = "checked" ] && checked="T"
++rm -f $TMP
+ 
+ case $retval in
+ 0)
+@@ -2702,23 +2713,25 @@
+   mainmenu
+ ;;
+ "`eval_gettext "Show active Wine processes"`")
+-  ps axwww|grep wine|grep -v "grep wine" >/tmp/psoutput.tmp.$$
+-  $DIALOG --tailbox /tmp/psoutput.tmp.$$ 60 80
+-  rm /tmp/psoutput.tmp.$$
++  TMP=`mktemp ${TMPDIR:-/tmp}/psout.XXXXXX` || exit $?
++  ps axwww|grep wine|grep -v "grep wine" >$TMP
++  $DIALOG --tailbox $TMP 60 80
++  rm $TMP
+   mainmenu
+ ;;
+ "`eval_gettext "Show installed Software"`")
+   testsw "testsw"
+-  echo -e "`eval_gettext " *** Installed software via registry *** "`" >/tmp/psoutput.tmp.$$
+-  cat $HOME/.wine/installed-software >>/tmp/psoutput.tmp.$$
+-  echo -e "`eval_gettext "\n\n *** Quiet installed software via registry *** "`" >>/tmp/psoutput.tmp.$$
+-  cat $HOME/.wine/quiet-installed-software >>/tmp/psoutput.tmp.$$
+-  echo -e "`eval_gettext "\n\n *** Hidden installed software via $CONFIG *** "`" >>/tmp/psoutput.tmp.$$
+-  grep " = installed at " "$CONFIG" >>/tmp/psoutput.tmp.$$
+-  echo -e "`eval_gettext "\n\n *** Failed software installations via $CONFIG *** "`" >>/tmp/psoutput.tmp.$$
+-  grep " = installation failed at " "$CONFIG" >>/tmp/psoutput.tmp.$$
+-  $DIALOG --no-cancel --tailbox /tmp/psoutput.tmp.$$ 60 80
+-  rm /tmp/psoutput.tmp.$$
++  TMP=`mktemp ${TMPDIR:-/tmp}/psout.XXXXXX` || exit $?
++  echo -e "`eval_gettext " *** Installed software via registry *** "`" >$TMP
++  cat $HOME/.wine/installed-software >>$TMP
++  echo -e "`eval_gettext "\n\n *** Quiet installed software via registry *** "`" >>$TMP
++  cat $HOME/.wine/quiet-installed-software >>$TMP
++  echo -e "`eval_gettext "\n\n *** Hidden installed software via $CONFIG *** "`" >>$TMP
++  grep " = installed at " "$CONFIG" >>$TMP
++  echo -e "`eval_gettext "\n\n *** Failed software installations via $CONFIG *** "`" >>$TMP
++  grep " = installation failed at " "$CONFIG" >>$TMP
++  $DIALOG --no-cancel --tailbox $TMP 60 80
++  rm $TMP
+   mainmenu
+ ;;
+ 
+@@ -2730,11 +2743,12 @@
+ ;;
+ "`eval_gettext "Save your Wine directory"`")
+   cd ~
++  TMP=`mktemp ${TMPDIR:-/tmp}/description.XXXXXX` || exit $?
+   $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+-          --inputbox "`eval_gettext "Give a description for the file.\nIt will be called wine-<Description>.tar.gz:"`" 300x200 2> /tmp/description.tmp.$$
++          --inputbox "`eval_gettext "Give a description for the file.\nIt will be called wine-<Description>.tar.gz:"`" 300x200 2> $TMP
+   if [ "$?" = "0" ]; then
+     realtar="1"
+-    if [ -e "wine-`cat /tmp/description.tmp.$$`.tar.gz" ]; then
++    if [ -e "wine-`cat $TMP`.tar.gz" ]; then
+       $DIALOG  --title "`eval_gettext "tar File Exists"`" --yesno "`eval_gettext "The file already exists. Do you want to overwrite?"`" 7 60
+       if [ "$?" = "0" ]; then
+         realtar="1"
+@@ -2743,20 +2757,21 @@
+       fi
+     fi
+     if [ "$realtar" = "1" ]; then
+-      (tar -cpvzf "wine-`cat /tmp/description.tmp.$$`.tar.gz" .wine; echo -e "`eval_gettext "===============================\ndone. You can close the window now!"`")  &>/tmp/taroutput.tmp.$$ &
+-      $DIALOG --tailbox /tmp/taroutput.tmp.$$ 60 80
++      (tar -cpvzf "wine-`cat $TMP`.tar.gz" .wine; echo -e "`eval_gettext "===============================\ndone. You can close the window now!"`")  &>$TMP &
++      $DIALOG --tailbox $TMP 60 80
+     fi
+   fi
+-  rm /tmp/taroutput.tmp.$$
++  rm $TMP
+   mainmenu
+ ;;
+ "`eval_gettext "Restore your Wine directory"`")
+   cd ~
++  TMP=`mktemp ${TMPDIR:-/tmp}/description.XXXXXX` || exit $?
+   $DIALOG --title "`eval_gettext "Create Fake Windows Drive"`" \
+-          --inputbox "`eval_gettext "Give the description for the saved file.\nThe file will be called wine-<Description>.tar.gz:"`" 300x200 2> /tmp/description.tmp.$$
++          --inputbox "`eval_gettext "Give the description for the saved file.\nThe file will be called wine-<Description>.tar.gz:"`" 300x200 2> $TMP
+   if [ "$?" = "0" ]; then
+     realtar="1"
+-    if [ -e "wine-`cat /tmp/description.tmp.$$`.tar.gz" ]; then
++    if [ -e "wine-`cat $TMP`.tar.gz" ]; then
+       if [ -e ".wine" ]; then
+         $DIALOG  --title "`eval_gettext ".wine exists"`" --defaultno --yesno "`eval_gettext "The .wine directory already exists. Do you want to delete it?"`" 7 60
+         if [ "$?" = "0" ]; then
+@@ -2777,11 +2792,11 @@
+       realtar="0"
+     fi
+     if [ "$realtar" = "1" ]; then
+-      (tar -xpvzf "wine-`cat /tmp/description.tmp.$$`.tar.gz"; echo -e "`eval_gettext "===============================\ndone. You can close the window now!"`")  &>/tmp/taroutput.tmp.$$ &
+-      $DIALOG --tailbox /tmp/taroutput.tmp.$$ 60 80
++      (tar -xpvzf "wine-`cat $TMP`.tar.gz"; echo -e "`eval_gettext "===============================\ndone. You can close the window now!"`")  &>$TMP &
++      $DIALOG --tailbox $TMP 60 80
+     fi
+   fi
+-  rm /tmp/taroutput.tmp.$$
++  rm $TMP
+   mainmenu
+ ;;
+ "`eval_gettext "Edit the Wine configuration file"`")
+@@ -2821,7 +2836,6 @@
+     ;;
+ esac
+ 
+-rm -f /tmp/xedit$$
+ }
+ 
+ function editconfig()
+@@ -2846,7 +2860,6 @@
+     ;;
+ esac
+ 
+-rm -f /tmp/xedit$$
+ }
+ 
+ 
+@@ -2880,15 +2893,16 @@
+ 
+ function readme()
+ {
++	TMP=`mktemp ${TMPDIR:-/tmp}/README.XXXXXX` || exit $?
+     if [ -e "${BASEDIR}/doc/README.${WINEVER}" ]; then
+-      cat ${BASEDIR}/doc/README.first ${BASEDIR}/doc/README.${WINEVER} > /tmp/README.wine.$$
++      cat ${BASEDIR}/doc/README.first ${BASEDIR}/doc/README.${WINEVER} > $TMP
+     else
+-      cat ${BASEDIR}/doc/README.first ${BASEDIR}/doc/README.nover > /tmp/README.wine.$$
++      cat ${BASEDIR}/doc/README.first ${BASEDIR}/doc/README.nover > $TMP
+     fi
+     $DIALOG --title "`eval_gettext "Intro"`" --fixed-font "" \
+ 	--no-cancel \
+-	--textbox /tmp/README.wine.$$ 35 60
+-    rm /tmp/README.wine.$$
++	--textbox $TMP 35 60
++    rm $TMP
+ }
+ 
+ 
