@@ -1,6 +1,7 @@
 %define		_suffix	jo
 %define		_shortver	%(echo %{version} | tr -d .)
-Summary:	WineTools is a menu driven installer for installing Windows programs under Linux.
+Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
+Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
 Version:	2.1.2
 Release:	0.%{_suffix}.7
@@ -12,20 +13,19 @@ Patch0:		%{name}-paths.patch
 Patch1:		%{name}-mktemp.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
 BuildRequires:	sed >= 4.0
-BuildRequires:	findutils
+Requires:	bash
 Requires:	gettext
+Requires:	mktemp
+Requires:	perl-base
 Requires:	wget
 Requires:	wine
-Requires:	perl-base
-Requires:	bash
-Requires:	mktemp
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 WineTools is a menu driven installer for installing about 90 Windows
 programs under the x86 (Athlon or Intel PC) processor architecture
-with the Linux operating system using Wine. This software lets you
+with the Linux operating system using WINE. This software lets you
 install the following Windows software:
 - DCOM98
 - IE6
@@ -42,7 +42,29 @@ your software. And it does much more than Sidenet, although it uses a
 part of the configuration for IE6 (thanks for that!).
 
 WineTools was initially written by Frank Hendriksen and was extended
-by me (Joachim von Thadden). It is licensed under the GPL.
+by Joachim von Thadden. It is licensed under the GPL.
+
+%description -l pl
+WineTools to oparty na menu instalator do instalowania oko³o 90
+windowsowych programów na komputerach z procesorem x86 (Athlon lub
+Intel PC) z systemem operacyjnym Linux przy u¿yciu WINE. Ten program
+pozwala zainstalowaæ nastêpuj±ce oprogramowanie dla Windows:
+- DCOM98
+- IE6
+- podstawowe fonty Windows
+- oprogramowanie systemowe Windows
+- Office i Office Viewer
+- Adobe Photoshop 7, Illustrator 9
+- wiele innych programów.
+
+Konfiguruje tak¿e w poprawny sposób katalog .wine, ¶ci±ga pliki do
+instalacji z sieci (oczywi¶cie tylko darmowe i shareware), instaluje
+fonty z Windows oraz pozwala odinstalowaæ i skonfigurowaæ
+oprogramowanie. Robi to w du¿ej mierze tak jak Sidenet, ale u¿ywa
+czê¶ci konfiguracji dla IE6 (za co nale¿± siê podziêkowania).
+
+WineTools zosta³ pocz±tkowo napisany przez Franka Hendriksena i zosta³
+rozszerzony przez Joachima von Thaddena. Jest licencjonowany na GPL.
 
 %prep
 %setup -q -n %{name}-%{_shortver}%{_suffix}
