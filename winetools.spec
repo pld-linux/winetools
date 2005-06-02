@@ -12,6 +12,7 @@ Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{_shortver}%
 Patch0:		%{name}-paths.patch
 Patch1:		%{name}-mktemp.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
+BuildRequires:	gettext-devel
 BuildRequires:	sed >= 4.0
 Requires:	bash
 Requires:	gettext
@@ -72,13 +73,14 @@ mv wt%{_shortver}%{_suffix} wt2
 %patch0 -p1
 
 sed -i -e '
-	s,\. findwine,. /usr/share/winetools/findwine,
+	s,\. findwine,. %{_datadir}/%{name}/findwine,
 ' $(find scripts -type f)
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name}}
 
+# TODO: Xdialog is binary, find it's source and create separate spec
 install Xdialog $RPM_BUILD_ROOT%{_bindir}
 install wt2 $RPM_BUILD_ROOT%{_bindir}
 install findwine $RPM_BUILD_ROOT%{_datadir}/%{name}
