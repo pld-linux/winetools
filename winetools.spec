@@ -4,7 +4,7 @@ Summary:	WineTools - a menu driven installer for installing Windows programs und
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
 Version:	2.1.2
-Release:	0.%{_suffix}.7
+Release:	0.%{_suffix}.9
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{_shortver}%{_suffix}.tar.gz
@@ -20,6 +20,8 @@ Requires:	mktemp
 Requires:	perl-base
 Requires:	wget
 Requires:	wine
+Requires:	Xdialog
+BuildArch:	noarch
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -80,8 +82,6 @@ sed -i -e '
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name}}
 
-# TODO: Xdialog is binary, find it's source and create separate spec
-install Xdialog $RPM_BUILD_ROOT%{_bindir}
 install wt2 $RPM_BUILD_ROOT%{_bindir}
 install findwine $RPM_BUILD_ROOT%{_datadir}/%{name}
 
@@ -105,7 +105,7 @@ rm -rf $RPM_BUILD_ROOT
 %files -f wt2.lang
 %defattr(644,root,root,755)
 %doc INSTALL.txt LICENSE.txt doc/*
-%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_bindir}/wt2
 
 %dir %{_datadir}/winetools
 %{_datadir}/winetools/doc
