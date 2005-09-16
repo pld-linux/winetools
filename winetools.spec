@@ -4,7 +4,7 @@ Summary:	WineTools - a menu driven installer for installing Windows programs und
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
 Version:	2.1.2
-Release:	0.%{_suffix}.9
+Release:	0.%{_suffix}.10
 License:	GPL
 Group:		Applications/Emulators
 Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{_shortver}%{_suffix}.tar.gz
@@ -20,6 +20,7 @@ Requires:	mktemp
 Requires:	perl-base
 Requires:	wget
 Requires:	wine
+Requires:	wine-programs
 Requires:	Xdialog
 BuildArch:	noarch
 ExclusiveArch:	%{ix86}
