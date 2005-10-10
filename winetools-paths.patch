@@ -43,3 +43,14 @@
      if [ -e "${n}/gettext.sh" ]; then
        . ${n}/gettext.sh
        echo "found gettext in $n"
+--- ./findwine~	2005-06-29 21:22:18.000000000 +0300
++++ ./findwine	2005-06-29 21:22:50.000000000 +0300
+@@ -8,7 +8,7 @@
+ CDROM="`ls -l $HOME/.wine/dosdevices/ 2>/dev/null | grep \" d: -> \"| sed -e \"s/^.* d: -> \(.*\)$/\1/\"`"
+ START="T"
+ PARAM="$1"
+-. gettext.sh &> /dev/null
++. $BASEDIR/gettext.sh &> /dev/null
+ if [ "$?" != "0" ]; then
+   $DIALOG	--title "*** WARNING ***" \
+ 		--no-cancel \
