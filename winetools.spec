@@ -13,7 +13,6 @@ Group:		Applications/Emulators
 Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{version}%{_suffix}-II.tar.gz
 # Source0-md5:	7a855e05e50552397506490e7ce57b6d
 Patch0:		%{name}-paths.patch
-Patch1:		%{name}-mktemp.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
 BuildRequires:	gettext-devel
 BuildRequires:	sed >= 4.0
