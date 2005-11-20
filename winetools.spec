@@ -1,14 +1,17 @@
+# TODO:
+# - icon and some desktop file
+#
 %define		_suffix	jo
-%define		_shortver	%(echo %{version} | tr -d .)
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
-Version:	2.1.2
-Release:	0.%{_suffix}.11
+Version:	0.9
+Release:	0.%{_suffix}.1
+Epoch:		1
 License:	GPL
 Group:		Applications/Emulators
-Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{_shortver}%{_suffix}.tar.gz
-# Source0-md5:	3ce523e4c52c0b9e31fc961b1be93c06
+Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{version}%{_suffix}-II.tar.gz
+# Source0-md5:	7a855e05e50552397506490e7ce57b6d
 Patch0:		%{name}-paths.patch
 Patch1:		%{name}-mktemp.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
@@ -19,11 +22,13 @@ Requires:	gettext
 Requires:	mktemp
 Requires:	perl-base
 Requires:	wget
-Requires:	wine
-Requires:	wine-programs
+Requires:	wine >= 1:0.9
+Requires:	wine-programs >= 1:0.9
 Requires:	Xdialog
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_winetoolsdir	%{_datadir}/%{name}
 
 %description
 WineTools is a menu driven installer for installing about 90 Windows
@@ -70,25 +75,24 @@ WineTools zosta³ pocz±tkowo napisany przez Franka Hendriksena i zosta³
 rozszerzony przez Joachima von Thaddena. Jest licencjonowany na GPL.
 
 %prep
-%setup -q -n %{name}-%{_shortver}%{_suffix}
-mv wt%{_shortver}%{_suffix} wt2
+%setup -q -n %{name}-%{version}%{_suffix}-II
+mv wt%{version}%{_suffix} wt2
+mv gettext.sh.dummy gettext.sh
 %patch0 -p1
 
-sed -i -e '
-	s,\. findwine,. %{_datadir}/%{name}/findwine,
-' $(find scripts -type f)
+sed -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_datadir}/%{name}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_winetoolsdir}}
 
 install wt2 $RPM_BUILD_ROOT%{_bindir}
-install findwine $RPM_BUILD_ROOT%{_datadir}/%{name}
+install findwine $RPM_BUILD_ROOT%{_winetoolsdir}
 
-cp -a scripts icon doc $RPM_BUILD_ROOT%{_datadir}/%{name}
-install *.ini *.cfg config.* *.reg findwine chopctrl.pl $RPM_BUILD_ROOT%{_datadir}/%{name}
-install iebatch.txt wineinit.tar.gz $RPM_BUILD_ROOT%{_datadir}/%{name}
-install gettext.sh $RPM_BUILD_ROOT%{_datadir}/%{name}
+cp -a scripts icon doc $RPM_BUILD_ROOT%{_winetoolsdir}
+install 3rdParty/*.{cfg,reg} *.reg findwine chopctrl.pl $RPM_BUILD_ROOT%{_winetoolsdir}
+install 3rdParty/iebatch.txt $RPM_BUILD_ROOT%{_winetoolsdir}
+install gettext.sh $RPM_BUILD_ROOT%{_winetoolsdir}
 
 cd po
 for i in $(ls *.po | cut -f1 -d.); do
@@ -107,22 +111,23 @@ rm -rf $RPM_BUILD_ROOT
 %doc INSTALL.txt LICENSE.txt doc/*
 %attr(755,root,root) %{_bindir}/wt2
 
-%dir %{_datadir}/winetools
-%{_datadir}/winetools/doc
-%{_datadir}/winetools/icon
+%dir %{_winetoolsdir}
+%{_winetoolsdir}/doc
+%{_winetoolsdir}/icon
 
-%{_datadir}/winetools/PowBallDX.cfg
-%{_datadir}/winetools/config.%{_shortver}
-%{_datadir}/winetools/config.empty
-%{_datadir}/winetools/lauge-prefs.ini
-%{_datadir}/winetools/bde.reg
-%{_datadir}/winetools/ie6.reg
-%{_datadir}/winetools/iebatch.txt
-%{_datadir}/winetools/wineinit.tar.gz
+%{_winetoolsdir}/PowBallDX.cfg
 
-%{_datadir}/winetools/gettext.sh
-%{_datadir}/winetools/findwine
-%attr(755,root,root) %{_datadir}/winetools/chopctrl.pl
+%{_winetoolsdir}/bde.reg
+%{_winetoolsdir}/futurepinball.reg
+%{_winetoolsdir}/ie6.reg
+%{_winetoolsdir}/iebatch.txt
+%{_winetoolsdir}/steaminstall.reg
+%{_winetoolsdir}/typograf.reg
+%{_winetoolsdir}/wt-config.reg
 
-%dir %{_datadir}/winetools/scripts
-%attr(755,root,root) %{_datadir}/winetools/scripts/*
+%{_winetoolsdir}/gettext.sh
+%{_winetoolsdir}/findwine
+%attr(755,root,root) %{_winetoolsdir}/chopctrl.pl
+
+%dir %{_winetoolsdir}/scripts
+%attr(755,root,root) %{_winetoolsdir}/scripts/*
