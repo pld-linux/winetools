@@ -22,20 +22,20 @@
 -BASEDIR="/usr/local/winetools"
 +DIALOG="/usr/bin/Xdialog"
 +BASEDIR="/usr/share/winetools"
- export PATH="$BASEDIR:$PATH"
+ #export PATH="$BASEDIR:$PATH"
  BINDIR="$HOME/bin"
  CDROM="`ls -l $HOME/.wine/dosdevices/ 2>/dev/null | grep \" d: -> \"| sed -e \"s/^.* d: -> \(.*\)$/\1/\"`"
  START="T"
  PARAM="$1"
--export TEXTDOMAINDIR=/usr/local/share/locale
--export TEXTDOMAIN=wt0.9
-+export TEXTDOMAINDIR=/usr/share/locale
-+export TEXTDOMAIN=wt2
+-export TEXTDOMAINDIR="/usr/local/share/locale"
+-export TEXTDOMAIN="wt0.9"
++export TEXTDOMAINDIR="/usr/share/locale"
++export TEXTDOMAIN="wt2"
  
  #for Debian:
  #BASEDIR="/usr/share/winetools"
-@@ -67,7 +67,7 @@
- root_test
+@@ -18,7 +18,7 @@
+ #export TEXTDOMAINDIR=/usr/share/locale
  
  # find gettext.sh
 -. gettext.sh &> /dev/null
