@@ -2,11 +2,12 @@
 # - icon and some desktop file
 #
 %define		_suffix	jo
+%define		_rel 1.1
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
 Version:	0.9
-Release:	1.%{_suffix}.1
+Release:	1.%{_suffix}.%{_rel}
 Epoch:		1
 License:	GPL
 Group:		Applications/Emulators
@@ -16,6 +17,7 @@ Patch0:		%{name}-paths.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
 BuildRequires:	gettext-devel
 BuildRequires:	sed >= 4.0
+Requires:	Xdialog
 Requires:	bash
 Requires:	gettext
 Requires:	mktemp
@@ -23,7 +25,6 @@ Requires:	perl-base
 Requires:	wget
 Requires:	wine >= 1:0.9
 Requires:	wine-programs >= 1:0.9
-Requires:	Xdialog
 ExclusiveArch:	%{ix86}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -83,14 +84,14 @@ sed -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_winetoolsdir}}
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_winetoolsdir}/3rdParty}
 
 install wt2 $RPM_BUILD_ROOT%{_bindir}
 install findwine $RPM_BUILD_ROOT%{_winetoolsdir}
 
 cp -a scripts icon doc $RPM_BUILD_ROOT%{_winetoolsdir}
-install 3rdParty/*.{cfg,reg} *.reg findwine chopctrl.pl $RPM_BUILD_ROOT%{_winetoolsdir}
-install 3rdParty/iebatch.txt $RPM_BUILD_ROOT%{_winetoolsdir}
+install *.reg findwine chopctrl.pl $RPM_BUILD_ROOT%{_winetoolsdir}
+install 3rdParty/*.{cfg,reg,txt} $RPM_BUILD_ROOT%{_winetoolsdir}/3rdParty
 install gettext.sh $RPM_BUILD_ROOT%{_winetoolsdir}
 
 cd po
@@ -113,20 +114,18 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_winetoolsdir}
 %{_winetoolsdir}/doc
 %{_winetoolsdir}/icon
-
-%{_winetoolsdir}/PowBallDX.cfg
-
-%{_winetoolsdir}/bde.reg
-%{_winetoolsdir}/futurepinball.reg
-%{_winetoolsdir}/ie6.reg
-%{_winetoolsdir}/iebatch.txt
-%{_winetoolsdir}/steaminstall.reg
-%{_winetoolsdir}/typograf.reg
-%{_winetoolsdir}/wt-config.reg
-
 %{_winetoolsdir}/gettext.sh
 %{_winetoolsdir}/findwine
+%{_winetoolsdir}/wt-config.reg
 %attr(755,root,root) %{_winetoolsdir}/chopctrl.pl
+%dir %{_winetoolsdir}/3rdParty
+%{_winetoolsdir}/3rdParty/PowBallDX.cfg
+%{_winetoolsdir}/3rdParty/bde.reg
+%{_winetoolsdir}/3rdParty/futurepinball.reg
+%{_winetoolsdir}/3rdParty/ie6.reg
+%{_winetoolsdir}/3rdParty/iebatch.txt
+%{_winetoolsdir}/3rdParty/steaminstall.reg
+%{_winetoolsdir}/3rdParty/typograf.reg
 
 %dir %{_winetoolsdir}/scripts
 %attr(755,root,root) %{_winetoolsdir}/scripts/*
