@@ -1,7 +1,7 @@
 # TODO:
 # - icon and some desktop file
 %define		_suffix	jo
-%define		_rel 3
+%define		_rel 4
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
@@ -24,7 +24,8 @@ Requires:	perl-base
 Requires:	wget
 Requires:	wine >= 1:0.9
 Requires:	wine-programs >= 1:0.9
-ExclusiveArch:	%{ix86}
+BuildArch:	noarch
+ExclusiveArch:	%{ix86} noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_winetoolsdir	%{_datadir}/%{name}
