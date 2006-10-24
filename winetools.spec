@@ -94,6 +94,7 @@ install 3rdParty/*.{cfg,reg,txt} $RPM_BUILD_ROOT%{_winetoolsdir}/3rdParty
 install gettext.sh $RPM_BUILD_ROOT%{_winetoolsdir}
 
 cd po
+mv {de_DE@euro,de}.po
 for i in $(ls *.po | cut -f1 -d.); do
 	install -d $RPM_BUILD_ROOT%{_datadir}/locale/$i/LC_MESSAGES
 	msgfmt $i.po -o $RPM_BUILD_ROOT%{_datadir}/locale/$i/LC_MESSAGES/wt2.mo
