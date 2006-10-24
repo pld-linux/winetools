@@ -1,7 +1,7 @@
 # TODO:
 # - icon and some desktop file
 %define		_suffix	jo
-%define		_rel 2
+%define		_rel 3
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
@@ -79,7 +79,8 @@ mv wt%{version}%{_suffix} wt2
 mv gettext.sh.dummy gettext.sh
 %patch0 -p1
 
-sed -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
+%{__sed} -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
+mv po/{de_DE@euro,de}.po
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -93,13 +94,12 @@ install *.reg findwine chopctrl.pl $RPM_BUILD_ROOT%{_winetoolsdir}
 install 3rdParty/*.{cfg,reg,txt} $RPM_BUILD_ROOT%{_winetoolsdir}/3rdParty
 install gettext.sh $RPM_BUILD_ROOT%{_winetoolsdir}
 
-cd po
-mv {de_DE@euro,de}.po
-for i in $(ls *.po | cut -f1 -d.); do
-	install -d $RPM_BUILD_ROOT%{_datadir}/locale/$i/LC_MESSAGES
-	msgfmt $i.po -o $RPM_BUILD_ROOT%{_datadir}/locale/$i/LC_MESSAGES/wt2.mo
+for i in po/*.po; do
+	locale=${i#po/}
+	locale=${locale%.po}
+	install -d $RPM_BUILD_ROOT%{_datadir}/locale/$locale/LC_MESSAGES
+	msgfmt po/$locale.po -o $RPM_BUILD_ROOT%{_datadir}/locale/$locale/LC_MESSAGES/wt2.mo
 done
-cd ..
 
 %find_lang wt2
 
