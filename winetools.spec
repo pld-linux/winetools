@@ -1,7 +1,7 @@
 # TODO:
 # - icon and some desktop file
 %define		_suffix	jo
-%define		_rel 4
+%define		_rel 5
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
 Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
 Name:		winetools
@@ -13,6 +13,7 @@ Group:		Applications/Emulators
 Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{version}%{_suffix}-III.tar.gz
 # Source0-md5:	e15874cabdd48342e7de5a1823ee3c98
 Patch0:		%{name}-paths.patch
+Patch1:		%{name}-parse_version.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
 BuildRequires:	gettext-devel
 BuildRequires:	sed >= 4.0
@@ -79,6 +80,7 @@ rozszerzony przez Joachima von Thaddena. Jest licencjonowany na GPL.
 mv wt%{version}%{_suffix} wt2
 mv gettext.sh.dummy gettext.sh
 %patch0 -p1
+%patch1 -p1
 
 %{__sed} -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
 mv po/{de_DE@euro,de}.po
