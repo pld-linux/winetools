@@ -3,7 +3,7 @@
 %define		_suffix	jo
 %define		_rel 5
 Summary:	WineTools - a menu driven installer for installing Windows programs under Linux
-Summary(pl):	WineTools - oparty na menu instalator do windowsowych programów pod Linuksem
+Summary(pl.UTF-8):   WineTools - oparty na menu instalator do windowsowych programÃ³w pod Linuksem
 Name:		winetools
 Version:	0.9
 Release:	1.%{_suffix}.%{_rel}
@@ -53,26 +53,26 @@ part of the configuration for IE6 (thanks for that!).
 WineTools was initially written by Frank Hendriksen and was extended
 by Joachim von Thadden. It is licensed under the GPL.
 
-%description -l pl
-WineTools to oparty na menu instalator do instalowania oko³o 90
-windowsowych programów na komputerach z procesorem x86 (Athlon lub
-Intel PC) z systemem operacyjnym Linux przy u¿yciu WINE. Ten program
-pozwala zainstalowaæ nastêpuj±ce oprogramowanie dla Windows:
+%description -l pl.UTF-8
+WineTools to oparty na menu instalator do instalowania okoÅ‚o 90
+windowsowych programÃ³w na komputerach z procesorem x86 (Athlon lub
+Intel PC) z systemem operacyjnym Linux przy uÅ¼yciu WINE. Ten program
+pozwala zainstalowaÄ‡ nastÄ™pujÄ…ce oprogramowanie dla Windows:
 - DCOM98
 - IE6
 - podstawowe fonty Windows
 - oprogramowanie systemowe Windows
 - Office i Office Viewer
 - Adobe Photoshop 7, Illustrator 9
-- wiele innych programów.
+- wiele innych programÃ³w.
 
-Konfiguruje tak¿e w poprawny sposób katalog .wine, ¶ci±ga pliki do
-instalacji z sieci (oczywi¶cie tylko darmowe i shareware), instaluje
-fonty z Windows oraz pozwala odinstalowaæ i skonfigurowaæ
-oprogramowanie. Robi to w du¿ej mierze tak jak Sidenet, ale u¿ywa
-czê¶ci konfiguracji dla IE6 (za co nale¿± siê podziêkowania).
+Konfiguruje takÅ¼e w poprawny sposÃ³b katalog .wine, Å›ciÄ…ga pliki do
+instalacji z sieci (oczywiÅ›cie tylko darmowe i shareware), instaluje
+fonty z Windows oraz pozwala odinstalowaÄ‡ i skonfigurowaÄ‡
+oprogramowanie. Robi to w duÅ¼ej mierze tak jak Sidenet, ale uÅ¼ywa
+czÄ™Å›ci konfiguracji dla IE6 (za co naleÅ¼Ä… siÄ™ podziÄ™kowania).
 
-WineTools zosta³ pocz±tkowo napisany przez Franka Hendriksena i zosta³
+WineTools zostaÅ‚ poczÄ…tkowo napisany przez Franka Hendriksena i zostaÅ‚
 rozszerzony przez Joachima von Thaddena. Jest licencjonowany na GPL.
 
 %prep
