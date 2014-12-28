@@ -15,7 +15,7 @@ Source0:	http://ds80-237-203-29.dedicated.hosteurope.de/wt/%{name}-%{version}%{_
 Patch0:		%{name}-paths.patch
 Patch1:		%{name}-parse_version.patch
 URL:		http://www.von-thadden.de/Joachim/WineTools/
-BuildRequires:	gettext-devel
+BuildRequires:	gettext-tools
 BuildRequires:	sed >= 4.0
 Requires:	Xdialog
 Requires:	bash
