@@ -79,8 +79,8 @@ rozszerzony przez Joachima von Thaddena. Jest licencjonowany na GPL.
 %setup -q -n %{name}-%{version}%{_suffix}-III
 mv wt%{version}%{_suffix} wt2
 mv gettext.sh.dummy gettext.sh
-%patch0 -p1
-%patch1 -p1
+%patch -P0 -p1
+%patch -P1 -p1
 
 %{__sed} -i -e 's#\. findwine#. %{_winetoolsdir}/findwine#' scripts/*
 mv po/{de_DE@euro,de}.po
